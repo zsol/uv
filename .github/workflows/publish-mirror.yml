@@ -4,7 +4,7 @@
 name: publish-mirror
 
 on:
-  workflow:call:
+  workflow_call:
     inputs:
       plan:
         required: true
