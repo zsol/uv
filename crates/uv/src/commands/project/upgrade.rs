@@ -72,6 +72,7 @@ pub(crate) async fn upgrade(
     };
     let (requirement_text, requirement) = select_requirement(&project, &package)?;
 
+    let existing_requirement = into_verbatim_requirement(requirement.clone(), &package)?;
     let relaxed_requirement = into_verbatim_requirement(relax_requirement(&requirement), &package)?;
 
     let mut pyproject = PyProjectTomlMut::from_toml(
@@ -79,8 +80,8 @@ pub(crate) async fn upgrade(
         DependencyTarget::PyProjectToml,
     )?;
     if pyproject
-        .replace_dependency(&relaxed_requirement, false)?
-        .is_none()
+        .replace_dependency(&existing_requirement, &relaxed_requirement, false)?
+        .is_empty()
     {
         bail!("Dependency `{package}` was not found in `project.dependencies`");
     }
@@ -200,8 +201,8 @@ pub(crate) async fn upgrade(
             DependencyTarget::PyProjectToml,
         )?;
         if pyproject
-            .replace_dependency(&proposed_requirement, false)?
-            .is_none()
+            .replace_dependency(&existing_requirement, &proposed_requirement, false)?
+            .is_empty()
         {
             bail!("Dependency `{package}` was not found in `project.dependencies`");
         }
