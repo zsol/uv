@@ -1,0 +1,20 @@
+name: Verify rerun concurrency
+on:
+  push:
+    branches: [zsol/friction-concurrency-check-20261028]
+permissions: {}
+# Both pushes represent two revisions of one pull request.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}-${{ github.run_attempt == 1 && 22964 || github.sha }}
+  cancel-in-progress: true
+jobs:
+  wait:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Keep this run active
+        env:
+          GROUP_SUFFIX: ${{ github.run_attempt == 1 && 22964 || github.sha }}
+        run: |
+          printf 'attempt=%s suffix=%s\n' "$GITHUB_RUN_ATTEMPT" "$GROUP_SUFFIX"
+          sleep 5
