@@ -17,4 +17,4 @@ jobs:
           GROUP_SUFFIX: ${{ github.run_attempt == 1 && 22964 || github.sha }}
         run: |
           printf 'attempt=%s suffix=%s\n' "$GITHUB_RUN_ATTEMPT" "$GROUP_SUFFIX"
-          sleep 5
+          sleep 150
